@@ -1,0 +1,41 @@
+[package]
+name = "wxdump_rs"
+version = "0.1.0"
+edition = "2021"
+authors = ["Rust Port of PyWxDump"]
+description = "A tool for obtaining WeChat account information, decrypting databases, and viewing chat history"
+
+[dependencies]
+# CLI
+clap = { version = "4.5", features = ["derive"] }
+colored = "2.1"
+
+# Cryptography
+aes = "0.8"
+hmac = "0.12"
+sha1 = "0.10"
+pbkdf2 = "0.12"
+hex = "0.4"
+
+# Windows API
+windows = { version = "0.54", features = ["Win32_System_Memory", "Win32_System_ProcessStatus", "Win32_System_Threading", "Win32_Foundation", "Win32_System_Registry", "Win32_System_Diagnostics_Debug"] }
+
+# Utility
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+regex = "1.10"
+anyhow = "1.0"
+thiserror = "1.0"
+log = "0.4"
+env_logger = "0.11"
+lazy_static = "1.4"
+
+# Web server
+axum = "0.7"
+tokio = { version = "1.36", features = ["full"] }
+tower-http = { version = "0.5", features = ["fs", "cors"] }
+
+# Database
+rusqlite = { version = "0.30", features = ["bundled"] }
+walkdir = "2.4"
+chrono = "0.4"
