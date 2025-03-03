@@ -39,7 +39,7 @@ wxdump_rs ui
 This is a work in progress. The following components have been implemented:
 
 - [x] Project structure
-- [x] CLI interface
+- [ ] CLI interface
 - [ ] Core functionality
 - [ ] Database handling
 - [ ] Web API
