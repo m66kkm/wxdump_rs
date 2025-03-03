@@ -1,21 +1,17 @@
-use std::path::{Path, PathBuf};
 use std::net::SocketAddr;
 use std::sync::{Arc, Mutex};
 use axum::{
-    routing::{get, post},
+    routing::get,
     Router,
-    extract::{State, Path as AxumPath, Query},
-    response::{IntoResponse, Response, Html},
+    extract::State,
+    response::IntoResponse,
     Json,
 };
-use tokio::net::TcpListener;
-use tower_http::services::ServeDir;
 use serde::{Serialize, Deserialize};
-use log::{info, warn, error};
+use log::info;
 
-use crate::wx_core::utils::{WxCoreError, WxCoreResult, wx_core_error};
-use crate::api::rjson::{ApiResponse, PaginationParams, PaginationResult};
-use crate::api::utils::{get_local_ip, find_available_port, open_browser};
+use crate::wx_core::utils::{WxCoreResult, wx_core_error};
+use crate::api::rjson::ApiResponse;
 
 /// Remote server configuration
 #[derive(Debug, Serialize, Deserialize, Clone)]

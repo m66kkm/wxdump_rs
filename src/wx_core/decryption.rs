@@ -1,12 +1,10 @@
 use std::path::{Path, PathBuf};
 use std::fs::{self, File};
-use std::io::{self, Read, Write};
-use aes::Aes256;
-use aes::cipher::{BlockDecrypt, KeyInit};
+use std::io::{Read, Write};
+use aes::cipher::KeyInit;
 use hmac::{Hmac, Mac};
 use sha1::Sha1;
 use pbkdf2::pbkdf2;
-use log::{info, error};
 use crate::wx_core::utils::{WxCoreError, WxCoreResult, wx_core_error};
 
 const SQLITE_FILE_HEADER: &str = "SQLite format 3\0";

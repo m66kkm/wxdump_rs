@@ -1,20 +1,16 @@
-use std::path::{Path, PathBuf};
+use std::path::PathBuf;
 use std::net::SocketAddr;
 use std::sync::{Arc, Mutex};
 use axum::{
-    routing::{get, post},
+    routing::get,
     Router,
-    extract::{State, Path as AxumPath, Query},
-    response::{IntoResponse, Response, Html},
+    extract::State,
+    response::IntoResponse,
     Json,
 };
-use tokio::net::TcpListener;
-use tower_http::services::ServeDir;
-use serde::{Serialize, Deserialize};
-use log::{info, warn, error};
+use log::info;
 
 use crate::wx_core::utils::{WxCoreError, WxCoreResult, wx_core_error};
-use crate::db::{DBHandler, MsgHandler, MicroHandler, MediaHandler};
 
 /// Application state
 struct AppState {

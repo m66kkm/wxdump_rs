@@ -1,8 +1,7 @@
 use std::path::{Path, PathBuf};
-use std::fs::{self, File};
-use std::io::{self, Read, Write};
-use rusqlite::{Connection, OpenFlags, Result as SqliteResult};
-use log::{info, warn, error};
+use std::fs::{self};
+use rusqlite::Connection;
+use log::warn;
 
 use crate::wx_core::utils::{WxCoreError, WxCoreResult, wx_core_error};
 use crate::wx_core::decryption::decrypt;

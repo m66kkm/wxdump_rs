@@ -5,4 +5,3 @@ pub mod merge_db;
 pub mod utils;
 
 // Re-export common types and functions
-pub use utils::WxCoreError;

@@ -6,4 +6,3 @@ pub mod export;
 
 // Re-export common functions
 pub use local_server::start_server;
-pub use local_server::gen_fastapi_app;

@@ -2,11 +2,8 @@ use std::path::Path;
 use std::fs::File;
 use std::io::{self, Read};
 use thiserror::Error;
-use log::{error, warn};
-use windows::Win32::System::ProcessStatus::PROCESS_MEMORY_COUNTERS;
-use windows::Win32::System::Threading::{OpenProcess, PROCESS_QUERY_INFORMATION, PROCESS_VM_READ};
-use windows::Win32::Foundation::{HANDLE, BOOL};
-use windows::Win32::System::Diagnostics::Debug::{ReadProcessMemory};
+use log::error;
+use windows::Win32::Foundation::HANDLE;
 use windows::Win32::System::Memory::{MEMORY_BASIC_INFORMATION};
 use serde::{Serialize, Deserialize};
 

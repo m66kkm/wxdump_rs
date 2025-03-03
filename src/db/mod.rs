@@ -14,6 +14,3 @@ pub use db_base::DBHandler;
 pub use db_msg::MsgHandler;
 pub use db_micro::MicroHandler;
 pub use db_media::MediaHandler;
-pub use db_openim_contact::OpenIMContactHandler;
-pub use db_favorite::FavoriteHandler;
-pub use db_public_msg::PublicMsgHandler;

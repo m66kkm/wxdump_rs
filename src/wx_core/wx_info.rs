@@ -1,19 +1,13 @@
 use std::path::{Path, PathBuf};
 use std::fs::{self, File};
-use std::io::{self, Read, Write};
 use std::collections::HashMap;
-use std::env;
 use regex::Regex;
 use serde::{Serialize, Deserialize};
-use windows::Win32::System::Threading::{OpenProcess, PROCESS_QUERY_INFORMATION, PROCESS_VM_READ};
-use windows::Win32::Foundation::{HANDLE, BOOL};
-use windows::Win32::System::Diagnostics::Debug::{ReadProcessMemory};
-use windows::Win32::System::Registry::{HKEY_CURRENT_USER, RegOpenKeyExA, RegQueryValueExA, RegCloseKey, KEY_READ};
-use log::{info, warn, error};
+use windows::Win32::Foundation::HANDLE;
+use log::warn;
 
 use crate::wx_core::utils::{
-    WxCoreError, WxCoreResult, wx_core_error, get_process_list, get_memory_maps, get_process_exe_path,
-    get_file_version_info, search_memory, get_exe_bit, WxOffs, CORE_DB_TYPE
+    WxCoreError, WxCoreResult, wx_core_error, get_process_list, WxOffs, CORE_DB_TYPE
 };
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
@@ -110,7 +104,7 @@ fn get_wx_key(key: Option<&str>, wx_dir: Option<&Path>, pid: u32, addr_len: usiz
 
 /// Get WeChat information details
 fn get_info_details(pid: u32, wx_offs: &WxOffs) -> WxInfo {
-    let mut info = WxInfo {
+    let info = WxInfo {
         pid,
         version: String::new(),
         account: None,

@@ -1,9 +1,6 @@
 use std::path::{Path, PathBuf};
-use rusqlite::{Connection, Result as SqliteResult, Row};
-use serde::{Serialize, Deserialize};
-use log::{info, warn, error};
 
-use crate::wx_core::utils::{WxCoreError, WxCoreResult, wx_core_error};
+use crate::wx_core::utils::{WxCoreResult, wx_core_error};
 use crate::db::db_base::DBHandler;
 
 /// MediaMSG database handler
