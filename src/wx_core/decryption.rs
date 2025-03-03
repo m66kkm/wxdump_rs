@@ -121,7 +121,7 @@ pub fn batch_decrypt(
         let mut process_list = Vec::new();
         
         if db_path.is_file() {
-            let in_path = db_path;
+            let in_path = db_path.to_path_buf();
             let out_file = format!("de_{}", in_path.file_name().unwrap().to_string_lossy());
             let out_file_path = out_path.join(out_file);
             process_list.push((key, in_path, out_file_path));
