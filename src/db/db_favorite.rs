@@ -1,7 +1,7 @@
 use std::path::Path;
 
-use crate::wx_core::utils::{WxCoreResult, wx_core_error};
 use crate::db::db_base::DBHandler;
+use crate::wx_core::utils::{wx_core_error, WxCoreResult};
 
 /// Favorite database handler
 pub struct FavoriteHandler {

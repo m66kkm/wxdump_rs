@@ -6,7 +6,7 @@ mod api;
 use clap::Parser;
 use cli::{Cli, Commands};
 use colored::*;
-use log::{info, error};
+use log::{error, info};
 
 const WXDUMP_ASCII: &str = r"
  ██╗    ██╗██╗  ██╗██████╗ ██╗   ██╗███╗   ███╗██████╗

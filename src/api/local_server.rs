@@ -1,16 +1,16 @@
-use std::path::PathBuf;
-use std::net::SocketAddr;
-use std::sync::{Arc, Mutex};
 use axum::{
-    routing::get,
-    Router,
     extract::State,
     response::IntoResponse,
+    routing::get,
     Json,
+    Router,
 };
 use log::info;
+use std::net::SocketAddr;
+use std::path::PathBuf;
+use std::sync::{Arc, Mutex};
 
-use crate::wx_core::utils::{WxCoreError, WxCoreResult, wx_core_error};
+use crate::wx_core::utils::{wx_core_error, WxCoreError, WxCoreResult};
 
 /// Application state
 struct AppState {

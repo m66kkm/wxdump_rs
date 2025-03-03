@@ -9,8 +9,4 @@ pub mod db_public_msg;
 pub mod db_sns;
 pub mod utils;
 
-// Re-export common types and functions
-pub use db_base::DBHandler;
 pub use db_msg::MsgHandler;
-pub use db_micro::MicroHandler;
-pub use db_media::MediaHandler;

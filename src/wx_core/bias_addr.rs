@@ -1,7 +1,7 @@
+use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
-use serde::{Serialize, Deserialize};
 
-use crate::wx_core::utils::{WxCoreError, WxCoreResult, wx_core_error, WxOffs};
+use crate::wx_core::utils::{wx_core_error, WxCoreError, WxCoreResult, WxOffs};
 use crate::wx_core::wx_info::get_wx_info;
 
 #[derive(Debug, Serialize, Deserialize)]

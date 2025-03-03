@@ -1,9 +1,9 @@
-use std::path::{Path, PathBuf};
 use std::fs::{self, File};
-use std::io::{Write};
+use std::io::Write;
+use std::path::{Path, PathBuf};
 
-use crate::wx_core::utils::{WxCoreResult, wx_core_error};
 use crate::db::MsgHandler;
+use crate::wx_core::utils::{wx_core_error, WxCoreResult};
 
 /// Export chat messages to HTML
 pub fn export_html(

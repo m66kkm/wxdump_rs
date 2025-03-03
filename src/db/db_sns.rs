@@ -1,7 +1,7 @@
 use std::path::Path;
 
-use crate::wx_core::utils::{WxCoreResult, wx_core_error};
 use crate::db::db_base::DBHandler;
+use crate::wx_core::utils::{wx_core_error, WxCoreResult};
 
 /// Sns database handler
 pub struct SnsHandler {

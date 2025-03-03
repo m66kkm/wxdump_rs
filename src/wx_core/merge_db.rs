@@ -1,10 +1,10 @@
-use std::path::{Path, PathBuf};
-use std::fs::{self};
-use rusqlite::Connection;
 use log::warn;
+use rusqlite::Connection;
+use std::fs::{self};
+use std::path::{Path, PathBuf};
 
-use crate::wx_core::utils::{WxCoreError, WxCoreResult, wx_core_error};
 use crate::wx_core::decryption::decrypt;
+use crate::wx_core::utils::{wx_core_error, WxCoreError, WxCoreResult};
 
 /// Merge multiple WeChat databases into a single database
 pub fn merge_db(db_paths: &str, out_path: impl AsRef<Path>) -> WxCoreResult<PathBuf> {

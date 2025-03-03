@@ -1,11 +1,11 @@
-use std::path::Path;
+use log::error;
+use serde::{Deserialize, Serialize};
 use std::fs::File;
 use std::io::{self, Read};
+use std::path::Path;
 use thiserror::Error;
-use log::error;
 use windows::Win32::Foundation::HANDLE;
-use windows::Win32::System::Memory::{MEMORY_BASIC_INFORMATION};
-use serde::{Serialize, Deserialize};
+use windows::Win32::System::Memory::MEMORY_BASIC_INFORMATION;
 
 // Core database types
 pub const CORE_DB_TYPE: [&str; 5] = ["MicroMsg", "MSG", "MediaMSG", "OpenIMContact", "OpenIMMedia"];

@@ -1,17 +1,17 @@
-use std::net::SocketAddr;
-use std::sync::{Arc, Mutex};
 use axum::{
-    routing::get,
-    Router,
     extract::State,
     response::IntoResponse,
+    routing::get,
     Json,
+    Router,
 };
-use serde::{Serialize, Deserialize};
 use log::info;
+use serde::{Deserialize, Serialize};
+use std::net::SocketAddr;
+use std::sync::{Arc, Mutex};
 
-use crate::wx_core::utils::{WxCoreResult, wx_core_error};
 use crate::api::rjson::ApiResponse;
+use crate::wx_core::utils::{wx_core_error, WxCoreResult};
 
 /// Remote server configuration
 #[derive(Debug, Serialize, Deserialize, Clone)]

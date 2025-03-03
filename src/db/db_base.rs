@@ -1,7 +1,7 @@
-use std::path::{Path, PathBuf};
 use rusqlite::Connection;
+use std::path::{Path, PathBuf};
 
-use crate::wx_core::utils::{WxCoreError, WxCoreResult, wx_core_error};
+use crate::wx_core::utils::{wx_core_error, WxCoreError, WxCoreResult};
 
 /// Base database handler
 pub struct DBHandler {

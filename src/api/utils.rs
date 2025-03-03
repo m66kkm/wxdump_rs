@@ -1,7 +1,7 @@
 use std::path::Path;
 use std::process::Command;
 
-use crate::wx_core::utils::{WxCoreError, WxCoreResult, wx_core_error};
+use crate::wx_core::utils::{wx_core_error, WxCoreError, WxCoreResult};
 
 /// Open a URL in the default browser
 pub fn open_browser(url: &str) -> WxCoreResult<()> {
