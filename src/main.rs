@@ -92,6 +92,6 @@ fn main() {
     }
     
     println!("{}", " options ".cyan().on_black());
-    println!("更多详情请查看: https://github.com/xaoyaoo/PyWxDump");
+    println!("更多详情请查看: https://github.com/m66kkm/wxdump_rs");
     println!("{}", format!(" WxDump_RS v{} ", env!("CARGO_PKG_VERSION")).cyan().on_black());
 }
