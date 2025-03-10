@@ -1,10 +1,4 @@
-use axum::{
-    extract::State,
-    response::IntoResponse,
-    routing::get,
-    Json,
-    Router,
-};
+use axum::{extract::State, response::IntoResponse, routing::get, Json, Router};
 use log::info;
 use std::net::SocketAddr;
 use std::path::PathBuf;
@@ -36,31 +30,31 @@ pub async fn start_server_async(
             wx_path,
             my_wxid,
         }));
-        
+
         // Create router
         let app: Router<()> = Router::new()
             .route("/api/health", get(health_check))
             .route("/api/info", get(get_info))
             .with_state(state);
-        
+
         // TODO: Add more routes
-        
+
         // Determine address to bind to
         let addr = if online {
             SocketAddr::from(([0, 0, 0, 0], port))
         } else {
             SocketAddr::from(([127, 0, 0, 1], port))
         };
-        
+
         // Print server information
         info!("Starting server on http://{}", addr);
-        
+
         // Open browser if requested
         if is_open_browser {
             let url = format!("http://localhost:{}", port);
             // TODO: Open browser
         }
-        
+
         Ok(())
     })
 }
@@ -80,10 +74,19 @@ pub fn start_server(
         .enable_all()
         .build()
         .map_err(|e| WxCoreError::Generic(format!("Failed to create runtime: {}", e)))?;
-    
+
     // Run the async function
     runtime.block_on(async {
-        start_server_async(merge_path, wx_path, my_wxid, online, port, debug, is_open_browser).await
+        start_server_async(
+            merge_path,
+            wx_path,
+            my_wxid,
+            online,
+            port,
+            debug,
+            is_open_browser,
+        )
+        .await
     })
 }
 
@@ -102,11 +105,17 @@ async fn health_check() -> &'static str {
 /// Get information handler
 async fn get_info(State(state): State<Arc<Mutex<AppState>>>) -> impl IntoResponse {
     let state = state.lock().unwrap();
-    
-    let merge_path = state.merge_path.as_ref().map(|p| p.to_string_lossy().to_string());
-    let wx_path = state.wx_path.as_ref().map(|p| p.to_string_lossy().to_string());
+
+    let merge_path = state
+        .merge_path
+        .as_ref()
+        .map(|p| p.to_string_lossy().to_string());
+    let wx_path = state
+        .wx_path
+        .as_ref()
+        .map(|p| p.to_string_lossy().to_string());
     let my_wxid = state.my_wxid.clone();
-    
+
     Json(serde_json::json!({
         "merge_path": merge_path,
         "wx_path": wx_path,

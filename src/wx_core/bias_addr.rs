@@ -38,19 +38,23 @@ impl BiasAddr {
             db_path,
         }
     }
-    
-    pub fn run(&self, is_print: bool, wx_offs_path: Option<PathBuf>) -> WxCoreResult<BiasAddrResult> {
+
+    pub fn run(
+        &self,
+        is_print: bool,
+        wx_offs_path: Option<PathBuf>,
+    ) -> WxCoreResult<BiasAddrResult> {
         wx_core_error(|| {
             // Get WeChat information
             let wx_infos = get_wx_info(&None, false, None)?;
-            
+
             if wx_infos.is_empty() {
                 return Err(WxCoreError::WeChatNotRunning);
             }
-            
+
             // TODO: Implement the actual logic to get the base address offset
             // This would involve searching memory for the account, mobile, name, and key
-            
+
             // For now, we'll just return a dummy result
             let result = BiasAddrResult {
                 version: wx_infos[0].version.clone(),
@@ -60,7 +64,7 @@ impl BiasAddr {
                 email_bias: 0,
                 key_bias: 0,
             };
-            
+
             // Update WX_OFFS file if provided
             if let Some(path) = wx_offs_path {
                 let mut wx_offs = if path.exists() {
@@ -68,7 +72,7 @@ impl BiasAddr {
                 } else {
                     WxOffs::new()
                 };
-                
+
                 wx_offs.add_offsets(
                     result.version.clone(),
                     vec![
@@ -79,10 +83,10 @@ impl BiasAddr {
                         result.key_bias,
                     ],
                 );
-                
+
                 wx_offs.to_file(path)?;
             }
-            
+
             // Print results if requested
             if is_print {
                 println!("{}", "=".repeat(32));
@@ -94,7 +98,7 @@ impl BiasAddr {
                 println!("[+] {:>8}: {:#x}", "key", result.key_bias);
                 println!("{}", "=".repeat(32));
             }
-            
+
             Ok(result)
         })
     }

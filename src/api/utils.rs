@@ -8,25 +8,19 @@ pub fn open_browser(url: &str) -> WxCoreResult<()> {
     wx_core_error(|| {
         #[cfg(target_os = "windows")]
         {
-            Command::new("cmd")
-                .args(["/c", "start", url])
-                .spawn()?;
+            Command::new("cmd").args(["/c", "start", url]).spawn()?;
         }
-        
+
         #[cfg(target_os = "macos")]
         {
-            Command::new("open")
-                .arg(url)
-                .spawn()?;
+            Command::new("open").arg(url).spawn()?;
         }
-        
+
         #[cfg(target_os = "linux")]
         {
-            Command::new("xdg-open")
-                .arg(url)
-                .spawn()?;
+            Command::new("xdg-open").arg(url).spawn()?;
         }
-        
+
         Ok(())
     })
 }
@@ -37,7 +31,7 @@ pub fn get_local_ip() -> WxCoreResult<String> {
         let socket = std::net::UdpSocket::bind("0.0.0.0:0")?;
         socket.connect("8.8.8.8:80")?;
         let local_addr = socket.local_addr()?;
-        
+
         Ok(local_addr.ip().to_string())
     })
 }
@@ -51,15 +45,15 @@ pub fn is_port_available(port: u16) -> bool {
 pub fn find_available_port(start_port: u16) -> WxCoreResult<u16> {
     wx_core_error(|| {
         let mut port = start_port;
-        
+
         while !is_port_available(port) {
             port += 1;
-            
+
             if port > 65535 {
                 return Err(WxCoreError::Generic("No available ports found".to_string()));
             }
         }
-        
+
         Ok(port)
     })
 }
@@ -67,7 +61,7 @@ pub fn find_available_port(start_port: u16) -> WxCoreResult<u16> {
 /// Get the MIME type of a file
 pub fn get_mime_type(path: impl AsRef<Path>) -> &'static str {
     let path = path.as_ref();
-    
+
     match path.extension().and_then(|ext| ext.to_str()) {
         Some("html") | Some("htm") => "text/html",
         Some("css") => "text/css",
@@ -101,7 +95,7 @@ pub fn format_timestamp(timestamp: i64) -> String {
     let dt = chrono::DateTime::from_timestamp(timestamp, 0)
         .unwrap_or_else(|| chrono::DateTime::from_timestamp(0, 0).unwrap())
         .naive_local();
-    
+
     dt.format("%Y-%m-%d %H:%M:%S").to_string()
 }
 
@@ -110,7 +104,7 @@ pub fn format_file_size(size: u64) -> String {
     const KB: u64 = 1024;
     const MB: u64 = KB * 1024;
     const GB: u64 = MB * 1024;
-    
+
     if size < KB {
         format!("{} B", size)
     } else if size < MB {

@@ -8,44 +8,50 @@ use windows::Win32::Foundation::HANDLE;
 use windows::Win32::System::Memory::MEMORY_BASIC_INFORMATION;
 
 // Core database types
-pub const CORE_DB_TYPE: [&str; 5] = ["MicroMsg", "MSG", "MediaMSG", "OpenIMContact", "OpenIMMedia"];
+pub const CORE_DB_TYPE: [&str; 5] = [
+    "MicroMsg",
+    "MSG",
+    "MediaMSG",
+    "OpenIMContact",
+    "OpenIMMedia",
+];
 
 // Error type for wx_core module
 #[derive(Error, Debug)]
 pub enum WxCoreError {
     #[error("IO error: {0}")]
     Io(#[from] io::Error),
-    
+
     #[error("JSON error: {0}")]
     Json(#[from] serde_json::Error),
-    
+
     #[error("SQLite error: {0}")]
     Sqlite(#[from] rusqlite::Error),
-    
+
     #[error("WalkDir error: {0}")]
     WalkDir(#[from] walkdir::Error),
-    
+
     #[error("Windows API error: {0}")]
     Windows(String),
-    
+
     #[error("Key error: {0}")]
     Key(String),
-    
+
     #[error("Database error: {0}")]
     Database(String),
-    
+
     #[error("WeChat not running")]
     WeChatNotRunning,
-    
+
     #[error("Invalid path: {0}")]
     InvalidPath(String),
-    
+
     #[error("Unsupported WeChat version")]
     UnsupportedVersion,
-    
+
     #[error("Memory search error: {0}")]
     MemorySearch(String),
-    
+
     #[error("Generic error: {0}")]
     Generic(String),
 }
@@ -72,29 +78,29 @@ pub fn verify_key(key: &[u8], db_path: impl AsRef<Path>) -> bool {
     if key.len() != 32 {
         return false;
     }
-    
+
     let db_path = db_path.as_ref();
     if !db_path.exists() {
         return false;
     }
-    
+
     // Read the first 16 bytes of the database file (salt)
     let mut file = match File::open(db_path) {
         Ok(file) => file,
         Err(_) => return false,
     };
-    
+
     let mut salt = [0u8; 16];
     if let Err(_) = file.read_exact(&mut salt) {
         return false;
     }
-    
+
     // TODO: Implement the actual key verification logic
     // This would involve:
     // 1. Deriving the HMAC key from the password and salt
     // 2. Computing the HMAC of the first page
     // 3. Comparing with the stored HMAC
-    
+
     // For now, we'll just return true if the file exists and has at least 16 bytes
     true
 }
@@ -160,23 +166,23 @@ impl WxOffs {
             versions: std::collections::HashMap::new(),
         }
     }
-    
+
     pub fn from_file(path: impl AsRef<Path>) -> WxCoreResult<Self> {
         let file = File::open(path)?;
         let wx_offs: WxOffs = serde_json::from_reader(file)?;
         Ok(wx_offs)
     }
-    
+
     pub fn to_file(&self, path: impl AsRef<Path>) -> WxCoreResult<()> {
         let file = File::create(path)?;
         serde_json::to_writer_pretty(file, self)?;
         Ok(())
     }
-    
+
     pub fn get_offsets(&self, version: &str) -> Option<&Vec<usize>> {
         self.versions.get(version)
     }
-    
+
     pub fn add_offsets(&mut self, version: String, offsets: Vec<usize>) {
         self.versions.insert(version, offsets);
     }

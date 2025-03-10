@@ -19,7 +19,7 @@ impl<T> ApiResponse<T> {
             data: Some(data),
         }
     }
-    
+
     /// Create a new successful API response with no data
     pub fn success_no_data() -> ApiResponse<()> {
         ApiResponse {
@@ -28,7 +28,7 @@ impl<T> ApiResponse<T> {
             data: None,
         }
     }
-    
+
     /// Create a new error API response
     pub fn error(code: i32, message: impl Into<String>) -> ApiResponse<()> {
         ApiResponse {
@@ -60,7 +60,7 @@ impl PaginationParams {
     pub fn offset(&self) -> usize {
         (self.page - 1) * self.page_size
     }
-    
+
     /// Get the limit for SQL queries
     pub fn limit(&self) -> usize {
         self.page_size
@@ -81,7 +81,7 @@ impl<T> PaginationResult<T> {
     /// Create a new pagination result
     pub fn new(items: Vec<T>, total: usize, params: &PaginationParams) -> Self {
         let total_pages = (total + params.page_size - 1) / params.page_size;
-        
+
         Self {
             total,
             page: params.page,

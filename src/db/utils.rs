@@ -2,7 +2,6 @@ use std::fs::File;
 use std::io::Read;
 use std::path::Path;
 
-
 /// Database type constants
 pub const DB_TYPE_MSG: &str = "MSG";
 pub const DB_TYPE_MICRO_MSG: &str = "MicroMsg";
@@ -60,21 +59,21 @@ pub fn get_db_type_name(db_type: &str) -> &'static str {
 /// Check if a file is a SQLite database
 pub fn is_sqlite_db(path: impl AsRef<Path>) -> bool {
     let path = path.as_ref();
-    
+
     if !path.exists() || !path.is_file() {
         return false;
     }
-    
+
     let mut file = match File::open(path) {
         Ok(file) => file,
         Err(_) => return false,
     };
-    
+
     let mut header = [0u8; 16];
     if let Err(_) = file.read_exact(&mut header) {
         return false;
     }
-    
+
     // Check for SQLite header
     let header_str = String::from_utf8_lossy(&header);
     header_str.starts_with("SQLite format 3")
@@ -83,13 +82,13 @@ pub fn is_sqlite_db(path: impl AsRef<Path>) -> bool {
 /// Get database type from file path
 pub fn get_db_type_from_path(path: impl AsRef<Path>) -> Option<String> {
     let path = path.as_ref();
-    
+
     if !is_sqlite_db(path) {
         return None;
     }
-    
+
     let file_name = path.file_name()?.to_string_lossy();
-    
+
     // Extract database type from file name
     // For example, "MSG.db" -> "MSG", "MicroMsg.db" -> "MicroMsg"
     let db_type = if file_name.ends_with(".db") {
@@ -100,7 +99,7 @@ pub fn get_db_type_from_path(path: impl AsRef<Path>) -> Option<String> {
     } else {
         file_name.to_string()
     };
-    
+
     Some(db_type)
 }
 

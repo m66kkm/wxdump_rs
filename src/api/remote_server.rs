@@ -1,10 +1,4 @@
-use axum::{
-    extract::State,
-    response::IntoResponse,
-    routing::get,
-    Json,
-    Router,
-};
+use axum::{extract::State, response::IntoResponse, routing::get, Json, Router};
 use log::info;
 use serde::{Deserialize, Serialize};
 use std::net::SocketAddr;
@@ -49,19 +43,22 @@ pub async fn start_remote_server(config: RemoteServerConfig) -> WxCoreResult<()>
             config: config.clone(),
             clients: Vec::new(),
         }));
-        
+
         // Create router
         let app: Router<()> = Router::new()
             .route("/api/health", get(health_check))
             .route("/api/info", get(get_info))
             .with_state(state);
-        
+
         // Determine address to bind to
         let addr = SocketAddr::from(([0, 0, 0, 0], config.port));
-        
+
         // Print server information
-        info!("Starting remote server on http://{}:{}", config.host, config.port);
-        
+        info!(
+            "Starting remote server on http://{}:{}",
+            config.host, config.port
+        );
+
         Ok(())
     })
 }
@@ -74,10 +71,10 @@ async fn health_check() -> &'static str {
 /// Get information handler
 async fn get_info(State(state): State<Arc<Mutex<RemoteServerState>>>) -> impl IntoResponse {
     let state = state.lock().unwrap();
-    
+
     let config = &state.config;
     let clients = &state.clients;
-    
+
     Json(ApiResponse::success(serde_json::json!({
         "host": config.host,
         "port": config.port,
@@ -91,7 +88,7 @@ pub async fn connect_to_remote_server(config: RemoteServerConfig) -> WxCoreResul
     wx_core_error(|| {
         // TODO: Implement the actual logic to connect to a remote server
         // This would involve making HTTP requests to the remote server
-        
+
         Ok(())
     })
 }
