@@ -1,41 +1,46 @@
 [package]
 name = "wxdump_rs"
 version = "0.1.0"
-edition = "2021"
-authors = ["Rust Port of PyWxDump"]
-description = "A tool for obtaining WeChat account information, decrypting databases, and viewing chat history"
+edition = "2021" # Corrected from 2024, as 2024 is not a valid edition yet. Assuming 2021.
 
 [dependencies]
-# CLI
-clap = { version = "4.5", features = ["derive"] }
-colored = "2.1"
-
-# Cryptography
-aes = "0.8"
-hmac = "0.12"
-sha1 = "0.10"
-pbkdf2 = "0.12"
-hex = "0.4"
-
-# Windows API
-windows = { version = "0.54", features = ["Win32_System_Memory", "Win32_System_ProcessStatus", "Win32_System_Threading", "Win32_Foundation", "Win32_System_Registry", "Win32_System_Diagnostics_Debug"] }
-
-# Utility
+anyhow = "1.0"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
-regex = "1.10"
-anyhow = "1.0"
-thiserror = "1.0"
-log = "0.4"
-env_logger = "0.11"
-lazy_static = "1.4"
+hex = "0.4.3" 
+rusqlite = { version = "0.31.0", features = ["bundled-sqlcipher"] } 
+walkdir = "2.5.0" # Added for recursive directory traversal
 
-# Web server
-axum = "0.7"
-tokio = { version = "1.36", features = ["full"] }
-tower-http = { version = "0.5", features = ["fs", "cors"] }
+# CLI
+clap = { version = "^4.5", features = ["derive"] }
+colored = "3.0.0"
 
-# Database
-rusqlite = { version = "0.30", features = ["bundled"] }
-walkdir = "2.4"
-chrono = "0.4"
+# Cryptography crates
+aes = "0.8.4"
+hmac = "0.12.1"
+sha1 = "0.10.6"
+pbkdf2 = "0.12.2"
+cbc = "0.1.2" # Added for AES CBC mode
+cipher = { version = "0.4.4", features = ["block-padding"] } # Explicitly added with feature
+bytemuck = { version = "1.23.0", features = ["derive"] } # Added for safe slice conversions
+# rand = "0.8" # Not adding yet, will add if explicitly needed for IV/salt generation
+chrono = { version = "^0.4", features = ["serde"] }
+
+[dependencies.windows-sys]
+version = "0.59.0" 
+features = [
+    "Win32_Foundation",
+    "Win32_System_Diagnostics_ToolHelp", 
+    "Win32_System_Threading",          
+    "Win32_System_Memory",             
+    "Win32_System_Diagnostics_Debug",  
+    "Win32_System_SystemInformation",  
+    "Win32_System_Registry",           
+    "Win32_Storage_FileSystem",        
+    "Win32_System_ProcessStatus",      
+    "Win32_System_WindowsProgramming",
+]
+
+[[bin]]
+name = "wxdump-cli"
+path = "src/cli/cli_main.rs"

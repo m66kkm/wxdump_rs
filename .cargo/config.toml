@@ -1,0 +1,6 @@
+[env]
+OPENSSL_DIR = "E:\\Tools\\OpenSSL-Win64"
+# 明确指定 OpenSSL 库文件所在的目录，因为它们不在 OPENSSL_DIR/lib 下
+OPENSSL_LIB_DIR = "E:\\Tools\\OpenSSL-Win64\\lib\\VC\\x64\\MD"
+# OPENSSL_INCLUDE_DIR 仍然可以依赖 OPENSSL_DIR 推断 (通常是 OPENSSL_DIR/include)
+# 如果 include 目录也有类似 VC/x64/MD 的结构，也需要明确指定 OPENSSL_INCLUDE_DIR

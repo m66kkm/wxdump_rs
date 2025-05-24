@@ -1,154 +1,118 @@
-mod api;
-mod cli;
-mod db;
-mod wx_core;
+mod core;
 
-use clap::Parser;
-use cli::{Cli, Commands};
-use colored::*;
-use log::{error, info};
+use std::path::PathBuf;
+use std::fs;
+use std::env; // For current_dir
+use anyhow::anyhow; 
+use walkdir::WalkDir; // Added for recursive directory traversal
 
-const WXDUMP_ASCII: &str = r"
- ██╗    ██╗██╗  ██╗██████╗ ██╗   ██╗███╗   ███╗██████╗
- ██║    ██║╚██╗██╔╝██╔══██╗██║   ██║████╗ ████║██╔══██╗
- ██║ █╗ ██║ ╚███╔╝ ██║  ██║██║   ██║██╔████╔██║██████╔╝
- ██║███╗██║ ██╔██╗ ██║  ██║██║   ██║██║╚██╔╝██║██╔═══╝
- ╚███╔███╔╝██╔╝ ██╗██████╔╝╚██████╔╝██║ ╚═╝ ██║██║
-  ╚══╝╚══╝ ╚═╝  ╚═╝╚═════╝  ╚═════╝ ╚═╝     ╚═╝╚═╝
-";
+fn main() -> anyhow::Result<()> {
+    // println!("Attempting to load WX_OFFS.json...");
+    // let loaded_offsets_map = match core::offsets::load_wx_offsets() {
+    //     Ok(offsets) => {
+    //         println!("[Main] Successfully loaded {} offset entries.", offsets.len());
+    //         offsets
+    //     }
+    //     Err(e) => {
+    //         eprintln!("[Main] Error loading WX_OFFS.json: {}", e);
+    //         return Ok(());
+    //     }
+    // };
 
-fn main() {
-    env_logger::init();
+    // let project_root = env::current_dir().map_err(|e| anyhow!("Failed to get current directory: {}", e))?;
+    // let base_temp_dir = project_root.join("temp"); // This will be wxdump_rust_core/temp
+    
+    // No longer creating a sub "msg" directory inside temp immediately, 
+    // will create subdirs based on relative paths from the source Msg directory.
 
-    let cli = Cli::parse();
+    // println!("\nExtracting WeChat User Info...");
+    // match core::info_extractor::extract_all_wechat_info(&loaded_offsets_map) {
+    //     Ok(user_infos) => {
+    //         if user_infos.is_empty() {
+    //             println!("[Main] No WeChat user info extracted.");
+    //         }
+    //         for user_info in user_infos {
+    //             println!("[Main] ---- User Info for PID: {} ----", user_info.pid);
+    //             println!("  Version: {}", user_info.version);
+    //             println!("  Account: {}", user_info.account.as_deref().unwrap_or("N/A"));
+    //             println!("  Nickname: {}", user_info.nickname.as_deref().unwrap_or("N/A"));
+    //             // ... (other user info printouts)
+    //             println!("  Key: {}", user_info.key.as_deref().unwrap_or("N/A"));
+    //             println!("  User DB Path: {}", user_info.wx_user_db_path.as_ref().map_or_else(|| String::from("N/A"), |p_buf| p_buf.to_string_lossy().to_string()));
+                
+    //             if let Some(user_data_root_path) = &user_info.wx_user_db_path {
+    //                 let source_msg_dir = user_data_root_path.join("Msg");
+    //                 println!("[Main] Looking for files to decrypt in: {:?}", source_msg_dir);
 
-    // Print the banner
-    println!("{}", WXDUMP_ASCII.cyan());
-    println!(
-        "{}",
-        format!(" WxDump_RS v{} ", env!("CARGO_PKG_VERSION"))
-            .cyan()
-            .on_black()
-    );
-    println!("WxDump_RS功能：获取账号信息、解密数据库、查看聊天记录、导出聊天记录为html等");
-    println!("{}", " options ".cyan().on_black());
+    //                 if let Some(key_to_use_for_dbs) = &user_info.key {
+    //                     if !source_msg_dir.exists() || !source_msg_dir.is_dir() {
+    //                         println!("[Main] Source Msg directory not found at: {:?}", source_msg_dir);
+    //                     } else {
+    //                         println!("[Main] Starting recursive decryption for files in {:?}", source_msg_dir);
+    //                         let mut decrypted_any_file = false;
 
-    match cli.command {
-        Commands::Bias {
-            mobile,
-            name,
-            account,
-            key,
-            db_path,
-            wx_offs_path,
-        } => {
-            info!("Running bias command");
-            match wx_core::bias_addr::run_bias_addr(
-                account,
-                mobile,
-                name,
-                key,
-                db_path,
-                wx_offs_path,
-            ) {
-                Ok(result) => println!("{:?}", result),
-                Err(e) => error!("Error: {}", e),
-            }
-        }
-        Commands::Info {
-            wx_offs_path,
-            save_path,
-        } => {
-            info!("Running info command");
-            match wx_core::wx_info::get_wx_info(&wx_offs_path, true, save_path) {
-                Ok(result) => println!("{:?}", result),
-                Err(e) => error!("Error: {}", e),
-            }
-        }
-        Commands::WxPath {
-            db_types,
-            wx_files,
-            wxid,
-        } => {
-            info!("Running wx_path command");
-            match wx_core::wx_info::get_wx_db(wx_files, db_types, wxid) {
-                Ok(result) => {
-                    for path in result {
-                        println!("{:?}", path);
-                    }
-                }
-                Err(e) => error!("Error: {}", e),
-            }
-        }
-        Commands::Decrypt {
-            key,
-            db_path,
-            out_path,
-        } => {
-            info!("Running decrypt command");
-            match wx_core::decryption::batch_decrypt(&key, &db_path, &out_path, true) {
-                Ok(result) => println!("{:?}", result),
-                Err(e) => error!("Error: {}", e),
-            }
-        }
-        Commands::Merge { db_path, out_path } => {
-            info!("Running merge command");
-            match wx_core::merge_db::merge_db(&db_path, &out_path) {
-                Ok(result) => println!("Merged database: {}", result.display()),
-                Err(e) => error!("Error: {}", e),
-            }
-        }
-        Commands::DbShow {
-            merge_path,
-            wx_path,
-            my_wxid,
-            online,
-        } => {
-            info!("Running dbshow command");
-            match api::start_server(
-                Some(merge_path),
-                wx_path,
-                Some(my_wxid),
-                online,
-                5000,
-                false,
-                false,
-            ) {
-                Ok(_) => {}
-                Err(e) => error!("Error: {}", e),
-            }
-        }
-        Commands::Ui {
-            port,
-            online,
-            debug,
-            is_open_browser,
-        } => {
-            info!("Running ui command");
-            match api::start_server(None, None, None, online, port, debug, is_open_browser) {
-                Ok(_) => {}
-                Err(e) => error!("Error: {}", e),
-            }
-        }
-        Commands::Api {
-            port,
-            online,
-            debug,
-        } => {
-            info!("Running api command");
-            match api::start_server(None, None, None, online, port, debug, false) {
-                Ok(_) => {}
-                Err(e) => error!("Error: {}", e),
-            }
-        }
-    }
+    //                         for entry_result in WalkDir::new(&source_msg_dir).into_iter().filter_map(Result::ok) {
+    //                             let entry_path = entry_result.path();
+    //                             if entry_path.is_file() {
+    //                                 // Calculate relative path from source_msg_dir
+    //                                 let relative_path = entry_path.strip_prefix(&source_msg_dir)
+    //                                     .map_err(|e| anyhow!("Failed to strip prefix for {:?}: {}", entry_path, e))?;
+                                    
+    //                                 // Construct target path in base_temp_dir, preserving relative structure
+    //                                 // and prefixing filename with "de_"
+    //                                 let target_parent_dir = if let Some(parent) = relative_path.parent() {
+    //                                     base_temp_dir.join(parent)
+    //                                 } else {
+    //                                     base_temp_dir.clone() 
+    //                                 };
+                                    
+    //                                 if !target_parent_dir.exists() {
+    //                                     fs::create_dir_all(&target_parent_dir).map_err(|e| 
+    //                                         anyhow!("Failed to create target parent directory {:?}: {}", target_parent_dir, e))?;
+    //                                 }
 
-    println!("{}", " options ".cyan().on_black());
-    println!("更多详情请查看: https://github.com/m66kkm/wxdump_rs");
-    println!(
-        "{}",
-        format!(" WxDump_RS v{} ", env!("CARGO_PKG_VERSION"))
-            .cyan()
-            .on_black()
-    );
+    //                                 let original_filename = entry_path.file_name().ok_or_else(|| anyhow!("Failed to get filename for {:?}", entry_path))?;
+    //                                 let decrypted_filename_str = format!("de_{}", original_filename.to_string_lossy());
+    //                                 let decrypted_file_target_path = target_parent_dir.join(decrypted_filename_str);
+
+    //                                 println!("[Main] Attempting to decrypt {:?} to {:?}", entry_path, decrypted_file_target_path);
+
+    //                                 match core::decryption::decrypt_database_file(entry_path, &decrypted_file_target_path, key_to_use_for_dbs) {
+    //                                     Ok(_) => {
+    //                                         println!("[Main] Successfully decrypted {:?} to {:?}", entry_path.file_name().unwrap_or_default(), decrypted_file_target_path);
+    //                                         decrypted_any_file = true;
+    //                                         // DO NOT open or delete the file as per new instructions
+    //                                     }
+    //                                     Err(e) => {
+    //                                         // Log decryption errors, but continue with other files
+    //                                         if entry_path.extension().map_or(false, |ext| ext == "db" || ext == "sqlite") { // Only log for likely DBs
+    //                                             eprintln!("[Main] Failed to decrypt potential DB file {:?}: {:?}", entry_path.file_name().unwrap_or_default(), e);
+    //                                         } else {
+    //                                             // For non-db files, decryption might fail expectedly (e.g. not encrypted, wrong format)
+    //                                             // println!("[Main] Skipped non-DB or failed decryption for {:?}: {:?}", entry_path.file_name().unwrap_or_default(), e);
+    //                                         }
+    //                                     }
+    //                                 }
+    //                             }
+    //                         }
+    //                         if decrypted_any_file {
+    //                             println!("[Main] Finished recursive decryption. Check {:?} for output.", base_temp_dir);
+    //                         } else {
+    //                             println!("[Main] No files were successfully decrypted from {:?}.", source_msg_dir);
+    //                         }
+    //                     }
+    //                 } else {
+    //                     println!("[Main] No key available. Cannot proceed with decryption for PID {}.", user_info.pid);
+    //                 }
+    //             } else {
+    //                 println!("[Main] Cannot attempt decryption for PID {}: Missing DB user data path.", user_info.pid);
+    //             }
+    //             println!("[Main] ------------------------------");
+    //         }
+    //     }
+    //     Err(e) => {
+    //         eprintln!("[Main] Error extracting WeChat info: {}", e);
+    //     }
+    // }
+    Ok(())
 }
